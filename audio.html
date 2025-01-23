@@ -1,0 +1,42 @@
+<!-- audio.html -->
+<audio id="background-music" loop>
+    <source src="Rap de los 40 limones.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+
+<script>
+    const music = document.getElementById("background-music");
+
+    // Ensure the music continues playing if it was already started
+    window.onload = () => {
+        const isMusicPlaying = localStorage.getItem("musicPlaying");
+        if (isMusicPlaying === "true" && !music.playing) {
+            music.play().catch((error) => {
+                console.error("Error playing music on page load:", error);
+            });
+        }
+    };
+
+    // Handle play music state
+    function playMusic() {
+        if (!music.playing) {
+            music.play().then(() => {
+                localStorage.setItem("musicPlaying", "true");
+            }).catch((error) => {
+                console.error("Error playing music:", error);
+            });
+        }
+    }
+
+    // Extend the audio element to handle "playing" state
+    Object.defineProperty(music, "playing", {
+        get: function () {
+            return !!(
+                this.currentTime > 0 &&
+                !this.paused &&
+                !this.ended &&
+                this.readyState > 2
+            );
+        }
+    });
+</script>

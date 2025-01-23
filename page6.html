@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Groove</title>
+        <link rel="stylesheet" href="style.css">
+        <style>
+            /* Add this CSS block to control the size of the GIF */
+            .Groove {
+                width: 700px; /* Adjust the width */
+                height: auto; /* Maintain aspect ratio */
+                display: block; /* Centering helper */
+                margin: 0 auto; /* Center the GIF horizontally */
+            }
+
+            body {
+                background-color: #8ebf2a; /* Set the background color to green */
+                margin: 0; /* Remove default margins */
+                overflow: hidden; /* Prevent scrollbars */
+            }
+        </style>
+        <script type="text/javascript">
+            // <![CDATA[
+            var colsel = ['#3e60cf', '#2e51c7', '#2349c4', '#1a41c4', '#0c38c9', '#052eb5', '#03248f']; // colours for animation
+            var speed = 100; // speed of animation, lower is faster
+
+            if (typeof 'addRVLoadEvent' != 'function')
+                function addRVLoadEvent(funky) {
+                    var oldonload = window.onload;
+                    if (typeof oldonload != 'function') window.onload = funky;
+                    else
+                        window.onload = function () {
+                            if (oldonload) oldonload();
+                            funky();
+                        };
+                }
+
+            addRVLoadEvent(whizzy);
+
+            var div;
+            var ring = new Array();
+            var swide = window.innerWidth;
+            var shigh = window.innerHeight;
+            var count = 0;
+            var roun = 0;
+            var nour = 0;
+
+            function whizzy() {
+                var i, dvs;
+                div = document.createElement('div');
+                dvs = div.style;
+                dvs.position = 'fixed';
+                dvs.left = '50%';
+                dvs.top = '50%';
+                dvs.width = '1px';
+                dvs.height = '1px';
+                dvs.overflow = 'visible';
+                dvs.zIndex = '-1';
+                document.body.insertBefore(div, document.body.firstChild);
+                for (i = 0; i < 50; i++) ring['col' + i] = new Array();
+                add_blobs();
+                setTimeout(zoomer, speed);
+            }
+
+            function add_blobs() {
+                var f, h, i, j, k, w;
+                for (i = 15; i < swide * 1.5;) {
+                    f = Math.floor(5 + 45 * (i / swide));
+                    ring['row' + count] = new Array();
+                    for (j = 0; j < 50; j++) {
+                        h = -f / 8 + (i / 2) * Math.cos((Math.PI * j) / 25);
+                        w = f / 5 + (i / 2) * Math.sin((Math.PI * j) / 25);
+                        if (h - f / 2 > shigh / 2 || h + f / 2 < -shigh / 2 || w - f / 2 > swide / 2 || w + f / 2 < -swide / 2)
+                            continue;
+                        k = document.createElement('div');
+                        dvs = k.style;
+                        dvs.position = 'absolute';
+                        dvs.left = w - f / 2 + 'px';
+                        dvs.top = h - f / 2 + 'px';
+                        dvs.width = f + 'px';
+                        dvs.height = f + 'px';
+                        dvs.backgroundColor = colsel[colsel.length - 1];
+                        dvs.borderRadius = '50%';
+                        ring['row' + count][j] = k;
+                        ring['col' + j][count] = k;
+                        div.appendChild(k);
+                    }
+                    count++;
+                    i += 2.2 * f;
+                }
+                nour = count;
+            }
+
+            function zoomer() {
+                for (var i = 0; i < 50; i++) {
+                    var tc = Math.abs(i - nour + roun) % colsel.length;
+                    if (ring['col' + i][roun]) ring['col' + i][roun].style.backgroundColor = colsel[tc];
+                }
+                if (++roun == count) {
+                    roun = 0;
+                    nour++;
+                    setTimeout(zoomer, speed);
+                } else zoomer();
+            }
+            // ]]>
+        </script>
+        <script type="text/javascript">
+            // Music playback handling
+            window.addEventListener('DOMContentLoaded', function () {
+                const music = document.getElementById("background-music");
+
+                // Ensure the music continues playing if it was already started
+                const isMusicPlaying = localStorage.getItem("musicPlaying");
+                const savedTime = localStorage.getItem("musicTime");
+
+                if (savedTime) {
+                    music.currentTime = parseFloat(savedTime);
+                }
+
+                if (isMusicPlaying === "true" && !music.playing) {
+                    music.play().catch((error) => {
+                        console.error("Error playing music on page load:", error);
+                    });
+                }
+
+                // Save the playback position and playing state
+                music.addEventListener("timeupdate", () => {
+                    localStorage.setItem("musicTime", music.currentTime);
+                });
+
+                // Extend the audio element to handle "playing" state
+                Object.defineProperty(music, "playing", {
+                    get: function () {
+                        return !!(
+                            this.currentTime > 0 &&
+                            !this.paused &&
+                            !this.ended &&
+                            this.readyState > 2
+                        );
+                    }
+                });
+
+                // Start music automatically if previously playing
+                if (isMusicPlaying === "true") {
+                    music.play().catch((error) => console.error(error));
+                }
+            });
+        </script>
+    </head>
+    <body>
+        <a href="index.html">
+            <img class="Groove" src="page6.gif">
+        </a>
+        <audio id="background-music" loop>
+            <source src="Rap de los 40 limones.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+    </body>
+</html>

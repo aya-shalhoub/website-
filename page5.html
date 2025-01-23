@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sound-waves</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="text/javascript">
+        // Music playback handling
+        window.addEventListener('DOMContentLoaded', function () {
+            const music = document.getElementById("background-music");
+
+            // Ensure the music continues playing if it was already started
+            const isMusicPlaying = localStorage.getItem("musicPlaying");
+            const savedTime = localStorage.getItem("musicTime");
+
+            if (savedTime) {
+                music.currentTime = parseFloat(savedTime);
+            }
+
+            if (isMusicPlaying === "true" && !music.playing) {
+                music.play().catch((error) => {
+                    console.error("Error playing music on page load:", error);
+                });
+            }
+
+            // Save the playback position and playing state
+            music.addEventListener("timeupdate", () => {
+                localStorage.setItem("musicTime", music.currentTime);
+            });
+
+            // Extend the audio element to handle "playing" state
+            Object.defineProperty(music, "playing", {
+                get: function () {
+                    return !!(
+                        this.currentTime > 0 &&
+                        !this.paused &&
+                        !this.ended &&
+                        this.readyState > 2
+                    );
+                }
+            });
+
+            // Start music automatically if previously playing
+            if (isMusicPlaying === "true") {
+                music.play().catch((error) => console.error(error));
+            }
+        });
+    </script>
+</head>
+<body>
+    <a href="page6.html">
+        <img class="Groove" src="page5.gif">
+    </a>
+    <audio id="background-music" loop>
+        <source src="Rap de los 40 limones.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+</body>
+</html>

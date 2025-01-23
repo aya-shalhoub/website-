@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Vinyl - Page 2</title>
+        <link rel="stylesheet" href="style.css">
+        <style>
+            .Vinyl {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 100vw;
+                height: 100vh;
+                object-fit: cover;
+                z-index: -1;
+            }
+
+            body {
+                margin: 0;
+                overflow: hidden;
+                background-color: transparent;
+            }
+
+            a {
+                display: block;
+                width: 100%;
+                height: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Audio Element for Background Music -->
+        <audio id="background-music" loop>
+            <source src="Rap de los 40 limones.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+
+        <!-- GIF Image wrapped in a link -->
+        <a href="page3.html">
+            <img class="Vinyl" src="page2.gif" alt="Vinyl" />
+        </a>
+
+        <script>
+            const music = document.getElementById("background-music");
+
+            // Persist music playback across pages
+            window.onload = () => {
+                const isMusicPlaying = localStorage.getItem("musicPlaying");
+                if (isMusicPlaying === "true") {
+                    const musicTime = localStorage.getItem("musicTime");
+                    if (musicTime) {
+                        music.currentTime = parseFloat(musicTime); // Set the music to where it left off
+                    }
+                    music.play();
+                }
+            };
+
+            // Extend the audio element to handle "playing" state
+            Object.defineProperty(music, "playing", {
+                get: function () {
+                    return !!(
+                        this.currentTime > 0 &&
+                        !this.paused &&
+                        !this.ended &&
+                        this.readyState > 2
+                    );
+                }
+            });
+
+            // Save the current time when the music is playing
+            music.ontimeupdate = function() {
+                localStorage.setItem("musicTime", music.currentTime);
+            };
+        </script>
+    </body>
+</html>

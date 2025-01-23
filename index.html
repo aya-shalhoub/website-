@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Website with Song and Gif Interaction - Page 1</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: black;
+            overflow: hidden;
+        }
+        img.Vinyl {
+            width: 100%;
+            height: auto;
+            max-width: 100vw;
+            max-height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <!-- Audio for background music -->
+    <audio id="background-music" loop>
+        <source src="Rap de los 40 limones.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Fullscreen GIF linking to the next page -->
+    <a href="page2.html">
+        <img class="Vinyl" src="page1.gif" alt="Vinyl Animation">
+    </a>
+
+    <script>
+        const music = document.getElementById("background-music");
+
+        // Reset playback state and position only on the first page
+        window.onload = () => {
+            localStorage.removeItem("musicPlaying");
+            localStorage.removeItem("musicTime");
+            music.currentTime = 0; // Start from the beginning
+            music.play().catch((error) => {
+                console.error("Error playing music on page load:", error);
+            });
+        };
+
+        // Save playback state and position when leaving the page
+        window.onbeforeunload = () => {
+            localStorage.setItem("musicPlaying", "true");
+            localStorage.setItem("musicTime", music.currentTime);
+        };
+
+        // Extend the audio element to handle "playing" state
+        Object.defineProperty(music, "playing", {
+            get: function () {
+                return !!(
+                    this.currentTime > 0 &&
+                    !this.paused &&
+                    !this.ended &&
+                    this.readyState > 2
+                );
+            }
+        });
+    </script>
+</body>
+</html>
